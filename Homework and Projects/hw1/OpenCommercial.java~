@@ -1,0 +1,91 @@
+/* OpenCommercial.java */
+
+import java.net.*;
+import java.io.*;
+
+/**  A class that provides a main function to read five lines of a commercial
+ *   Web page and print them in reverse order, given the name of a company.
+ */
+
+class OpenCommercial {
+
+  /** Prompts the user for the name X of a company (a single string), opens
+   *  the Web site corresponding to www.X.com, and prints the first five lines
+   *  of the Web page in reverse order.
+   *  @param arg is not used.
+   *  @exception Exception thrown if there are any problems parsing the 
+   *             user's input or opening the connection.
+   */
+  public static void main(String[] arg) throws Exception {
+
+    BufferedReader keyboard;
+    String inputLine;
+
+    keyboard = new BufferedReader(new InputStreamReader(System.in));
+
+    System.out.print("Please enter the name of a company (without spaces): ");
+    System.out.flush();        /* Make sure the line is printed immediately. */
+    inputLine = keyboard.readLine();
+	
+    /* Replace this comment with your solution.  *********************************/
+	/*******************refer:https://docs.oracle.com/javase/tutorial/networking/urls/readingURL.html*******************************************/
+    int numberOfLines=5;
+    String[] outputLine=new String[numberOfLines];
+    String Web="http://www.".concat(inputLine).concat(".com/"); /*setup the webpage*/
+    String Result;
+    
+   
+    URL Page=new URL(Web);
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(Page.openStream()));
+    
+    
+   
+    /*Before we can read the lines of text, we need to set  up an array,Each position in the array can then hold one complete line of text*/
+  /****************Method 1********************************/  
+  /*
+    int i;
+    for (i=numberOfLines;i>0;i--){
+    outputLine[i-1]=reader.readLine();
+     
+     }
+    for (i=0;i<numberOfLines;i++){
+    System.out.println(outputLine[i]);
+    }
+   */  
+ /****************Method 2**********************************/
+ /*
+    Result=(reader.readLine());
+    Result=(reader.readLine());
+     Result=(reader.readLine());
+      Result=(reader.readLine());
+       Result=(reader.readLine());
+      System.out.println(Result);
+ 
+ BufferedReader reader2 = new BufferedReader(
+        new InputStreamReader(Page.openStream()));
+ 
+    String line2;  
+      line2=(reader2.readLine());
+    line2=(reader2.readLine());
+      line2=(reader2.readLine());
+       line2=(reader2.readLine());
+      System.out.println(line2);
+*/
+      
+  /* while ((Result=reader.readLine())!=null)
+       System.out.println(Result);  */
+   
+       
+    reader.close();
+   
+   
+
+    /*To put all the lines of text from the file into each position in the array, the loop will get each line of text and place each line into the array*/
+
+  
+    
+    
+    
+ }
+}

@@ -1,0 +1,65 @@
+QUIZ 1
+How to modify an array passed as a method parameter:
+Ex1:
+public static void main(String[] args)
+{
+    int[] temp_array = {1};
+    method(temp_array);
+    System.out.println(temp_array[0]); // prints 1
+}
+public static void method(int[] n)
+{
+    n = new int[]{2};
+}
+
+
+Ex2:
+public static void main(String[] args)
+{
+    int[] temp_array = {1};
+    method(temp_array);
+    System.out.println(temp_array[0]); // prints 2
+}
+public static void method(int[] n)
+{
+    n[0] = 2;
+}
+
+EX3:
+public static void main(String[] args)
+{
+    int[] temp_array = {1};
+    method(temp_array);
+    System.out.println(temp_array[0]); // prints 1 ?!
+}
+public static void method(int[] n)
+{
+    int[] temp = new int[]{2};
+    n = temp.clone();
+}
+
+examples 1 and 3 are virtually the same in context of the question - you are trying to assign a new value to n (which is a reference to an array passed by value). 
+In order to copy values into array passed into your method method you might want to look at:System.arraycopy
+
+how to initialize an array:
+int[] result;
+result=new int[ints.length];
+可以合并为：
+int [] result =new int [ints.length];
+
+
+for (int i=0;i<((ints.length));i++) {
+		  ints[i]=result[i];
+可以合并为：
+System.arraycopy(result, 0, ints, 0, ints.length); 
+
+QUIZ 2
+==------is a reference comparison, both objects point to the same memory location
+.equals()---------evaluated to the comparison of values in the objects
+
+delete a listnode:
+1.要注意加边界条件才能循环正确
+2.要delete node A, 先找到A 的前一个node B, 找到B.next.next,另存为一个变量，最后再把这个变量赋予给B.next.
+
+QUIZ 3
+要注意每次都要重建一个new listnode，不能一个listnode重复使用。

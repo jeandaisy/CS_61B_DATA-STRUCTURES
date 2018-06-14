@@ -1,0 +1,52 @@
+自我总结一下homework2里学到的东西。但想来想去还是贴出来，方便后面的同学参考~有些乱，希望不要介意1.Date类需要实现的功能：
+（1）计算两个Date的时间差——方法：difference（
+法1：这个要费脑，这个方法参考了前面的层主的思路，但我自己实现了代码，木有照搬他的。
+如果两个年份相同，就用后面日期dayInYear减前面日期的dayInYear；
+否则｛
+tempYear1 = previous.year; tempYear2 = later.year; 
+当tempYear2 - tempYear1 >1时，
+｛tempYear1 ++; diffDays += tempYear1的全年天数（用isLeapYear和 ? : ）｝
+diffDays再加上later.dayInYear()加上previous全年的天数减去previous.dayInYear();｝
+
+法2：简单粗暴，不需要考虑中间复杂的计算过程和各种可能的情况，只是需要增加一个dayInAll()方法求出从A.D.1/1/1到现在的总天数。difference方法只需return days - d.days。
+Added a private field days to store the number of days from Jan. 1, 1. Generate this value whenever a Date instance is created. 
+This would significant simplify the implemetation of methods isBefore() isAfter() and difference(). 
+isBefore(): return days < d.days;
+isAfter(): return days > d.days;
+difference(): return days - d.days;
+
+）很明显，当增加了dayInAll()方法后，代码重用度更高了。
+（2）比较两个Date的大小——方法：isBefore和isAfter（根据Code Reusing的思想，isAfter里直接调用isBefore一行代码即可）
+法1：见上         法2：在isBefore方法里用if-else分类讨论，isAfter里调用d.isBefore(this)即可。
+
+2.关于日期计算的一些知识点
+（1）闰年的判断：
+if((year%4==0&&year%100!=0)||year%400==0)    return true;
+复制代码
+（2）String对象的matches方法可以判断字符串与正则表达式是否匹配。
+if(s.matches("\\d{1,2}\\/\\d{1,2}\\/\\d{1,4}")){
+复制代码
+关于正则表达式http://docs.oracle.com/javase/7/docs/api/
+（3）String对象的split方法可以按指定符号切割字符串并返回切割后的String数组。
+（4）Integer.parseInt()方法将String转化为int
+String[] d=s.split("/");
+                  month=Integer.parseInt(d[0]);
+                  day=Integer.parseInt(d[1]);
+                  year=Integer.parseInt(d[2]);
+复制代码
+（5）System.exit(0);退出程序。
+         而return语句是退出方法返回给调用者，只有main中的return语句才能退出整个程序。
+————————
+【分析】如果让我们自己写Date类的构造呢？以后要学会自己写出这样可以层层调用结构清晰的类。从程序功能入手，依次去想【这个类可以怎样被构造、需要哪些static方法来完成与对象无关的子功能、可否添加一些方法降低算法复杂度、toString()方法是否需要重写等】
+域：int moth,day,year;
+构造函数：两个
+一种是由int型直接创建，一种是用String创建
+static方法（想一下一个日期类需要哪些与特定（日期）对象无关的方法）：
+判断日期是否合法——public static boolean isValidDate(int month, int day, int year);
+是否是闰年——public static boolean isLeapYear(int year)
+每个月有多少天——public static int daysInMonth(int month, int year)
+普通方法：
+需要重写——public String toString();
+计算某一天是当年的第几天——public int dayInYear();
+自己添加的辅助方法——public int dayInAll();
+实现最终要求的功能——public boolean isBefore(Date d)/isAfer(Date d);和public int difference(Date d);

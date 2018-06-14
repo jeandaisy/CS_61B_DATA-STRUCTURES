@@ -1,0 +1,24 @@
+I am not sure how to implement a comparable interface into my abstract class. I have the following example code that I am using to try and get my head around it: 
+public class Animal{
+    public String name;
+    public int yearDiscovered;
+    public String population;
+
+    public Animal(String name, int yearDiscovered, String population){
+        this.name = name;
+        this.yearDiscovered = yearDiscovered;
+        this.population = population; }
+
+    public String toString(){
+        String s = "Animal name: "+ name+"\nYear Discovered: "+yearDiscovered+"\nPopulation: "+population;
+        return s;
+    }
+}
+
+
+You just have to define that Animal implements Comparable<Animal> i.e. public class Animal implements Comparable<Animal>. And then you have to implement the compareTo(Animal other) method that way you like it.
+@Override
+public int compareTo(Animal other) {
+    return Integer.compare(this.year_discovered, other.year_discovered);
+}
+Using this implementation of compareTo, animals with a higher year_discovered will get ordered higher. I hope you get the idea of Comparable and compareTo with this example.

@@ -1,0 +1,71 @@
+这次作业一开始轻视了。然后做到part3的时候才发现，有难度，而且难度不在于算法构造，而在于对于Java多态，继承的理解，对 超类转子类，子类转超类的理解。还有，为什么用继承对于工程设计来说会更加方便。所以正好在这里总结下，方便以后自己回头复习。
+1.子类转超类
+Father father = new Son();
+此时，是向上转型。Son是子类，相较于父类来说，其功能更加强大复杂。但是向上转型后，父类中不存在但子类中存在的方法不会被包含到对象中，同时子类的field也不会被包含到该对象中。如果子类的某个方法与父类完全相同（返回值类型也必须相同），那么，该引用中的该方法会被重写（overrride）。但是，即使是相同名字的field，也不会被重写。也就是说，我们虽然用父类引用接收了子类对象，但我们却可以使用具有子类特色的方法。正如此题中，我重写了 remove(),newNode()方法。
+overload，重载。指的应该是，完全重新构造了一个同名的方法，但该方法的返回值类型和输入参数与父类必须都不同。如果输入参数相同但返回值类型不同，我测试过，编译器错误。
+重载(overload)时，同名同参数的方法，其返回值类型必须与父类相同，并且，其权限必须更高！
+比如说，父类是protected，子类必须是protected or public. 若父类是public，则子类必须是public。
+另外，子类转超类必须要明白的一点是，（此处摘抄自网络博客）
+当我们用一个类型的构造器构造出一个对象时，这个对象的类型就已经确定的，也就说它的本质是不会再发生变化了。各种类型的转换，只不过是他的能力被临时消弱了而已（能力被削弱的意思是你访问这个对象用的指针能看到这个对象的多少的功能，虽然这个对象有很多的功能摆在那里），其本质的东西并没有任何的变化（这句话是重点）。
+
+
+所以说，father 这个引用所指的内存块仍然包含那些子类特有的方法，但是该引用"看不见"这些方法。
+
+2.超类转子类
+Father father = new Father();
+Son son = (Son) father;
+这个情况下编译器会报错， Cast Exception
+正如我刚说的，超类可以强制转换为子类，但前提要求是，该超类其本质（额。。自学的，所以专业术语不到位，见谅。。）必须是子类。
+所以这么做是对的：
+Father father = new Son();
+Son son = (Son) father;
+
+
+
+3.extends
+当子类继承父类时，什么会被继承过来：
+super类中的protected,public都可被子类继承，包括field 和 method.
+同时，如果子类自己的某个field或者method与父类完全相同（prototype），那么，该field或method将会覆盖父类相对应的field或method。
+同时，父类的构造器不能被继承，但必须被子类构造器调用！
+
+
+public class Father {
+    int a;
+    public Father(int x) {
+       this.a = x;
+    }
+}
+
+public class Son extends Father {
+
+}
+报错。编译器会寻找Son类中的构造函数。但是没找到，就执行default constructor， 
+Son() { }
+然后编译器进入该构造器。他没有发现super关键字，默认执行 super();（构造函数不能被继承，但必须被调用！）
+然后去父类中找super()构造函数。没找到。于是就会报错。
+所以应该是，
+public class Son extends Father {
+      Son(int x) {
+         super(x);
+     } 
+}
+
+我之前在想，为什么一定要在子类构造器中最先一步，调用父类构造器。现在觉得，通过调用父类构造器，将子类从父类那里继承过来的成员先按照父类的规则进行初始化。然后，再由我们自己进一步设计具有该子类特色的初始化方式。
+
+之前一直对继承这个东西用处多大，不是很清楚。现在的想法是：
+一开始我设计了DList,DListNode这样的最基本的链表。功能也是最基本的。
+后来用着用着发现不够用了，需要添加一些新的功能，比如，锁住某些节点让其不能被删除。
+于是我新写了一个类LockDListNode extends DListNode. 然后里面加入了boolean isLocked。
+但是如果仍使用DList中的方法insert,remove,forward,back....来处理LockDListNode.就会发生类型转换错误。
+我一开始的想法是，用lockNode方法来处理。将那些需要lock的node由DListNode强制转换为LockDListNode.然后报错了，因为传入的DListNode其本质还是DListNode...不是 LockDListNode.所以不能强制转换。
+所以必须想一种方法，在LockDList中每次生成新的结点时，该结点必须都是LockDListNode类型，然后返回值是DListNode,从而在返回过程中完成向上转型。之后，那些方法虽然传入的仍然是DListNode类型，但其本质已经全部变成了LockDListNode类型。这个时候我才发现了 newNode() 的作用。老师让我们生成所有结点不要通过DListNode的构造器，而是通过这个newNode()来调用.就是因为该newNode()可被子类重写，创建出新的类型的结点。然后之后的其他链表操作可以完全继承不用改写，依然可以正常工作。(当然除了remove() )
+所以我觉得楼主给的测试代码中，TestLockDList.java 有块地方有问题.
+newtest(LockDList sl1)中，不应该用LockDListNode来接收 s11.front()的返回值。而应该用 DListNode 来接收，这才能体现出Java三大特性，封装，多态，继承，给软件设计带来的方便。我们不需要知道LockDListNode到底是怎么实现的，甚至不用知道LockDListNode这个类的名字。这些都有其他人写好。然后我们直接使用LockDList来完成我们需要的操作，同时依然用DListNode来接收相应操作返回的结点，其实此时这些结点的本质已经发生了改变，但Java保证我们依然可以用超类来接收他们。
+
+
+不知不觉写了这么多。之前在阿里的同学和我说，Java的多态和继承是面试必考题，所以学得比较认真。但是自学的毕竟也是自学的，术语什么的都不到位，理解肯定也有错误。欢迎讨论。
+附上我参考的几个博客，写的都很好。可以看下。
+http://www.cnblogs.com/chenssy/p/3393160.html
+http://www.cnblogs.com/chenssy/p/3372798.html
+http://www.cnblogs.com/stemon/p/3394464.html
+

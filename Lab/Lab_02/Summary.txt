@@ -1,0 +1,63 @@
+自我总结一下lab2里学到的东西（这一遍想把知识点都学扎实，所以我能想到的点都总结在下面，可能会比较啰嗦）：
+1.写代码时要注意运用Good Software Engineering的思想——Reusing Code!
+举个栗子~
+public Fraction(int n, int d) {
+    if (n < 0) {
+      System.out.println("Fatal error:  Negative numerator.");
+      System.exit(0);
+    }
+    if (d < 1) {
+      System.out.println("Fatal error:  Nonpositive denominator.");
+      System.exit(0);
+    }
+    numberOfFractions++;
+    numerator = n; 
+    denominator = d;
+  }
+复制代码
+然后其他的构造函数全部调用它，使得程序变得简短，并且如果后续我们发现构造函数有bug，只需要改动一个即可。
+public Fraction(int n) {
+    this(n, 1);
+  }
+
+public Fraction() {
+          this(0,1);
+  }
+
+public Fraction(Fraction original) {
+    this(original.numerator,original.denominator);
+  }
+复制代码
+In your own programs, if you find yourself copying multiple lines of code for reuse, it is usually wise to put the common code into a new shared method.
+
+
+2.static域“numberOfFractions”用来计数（Fraction对象的个数）
+   前面楼层的前辈说的观点我很赞同：
+fracs()的改法是把class field里面改成static，method里面return的就不用加this了。
+其实虽然题目明确要求不能改signature，但我认为good style是fracs()本身也应该是static method；这样可以保证一个实例都没有时依旧可以返回numberOfFractions.
+
+至于numberOfFractions两种结果6和7：
+Fraction sumOfThree = f0.add(sumOfTwo) 这样写可以保证fraction只被call一次 得到6
+Fraction sunOfThree = f0.add(f1.add(f2))这样写得到7
+
+另外main里面f3.fracs()其实f3可以替换成任一Fraction Object (e.g. f0, f1...)
+
+3.java中每个类都有隐含的toString()方法，当这个类的对象被转换为字符串时会自动调用。如果我们想让一个类以我们希望的方式转化成String类型，就必须重写toString()方法。
+
+
+4.最大公约数算法——辗转相除
+static private int gcd(int x, int y) {
+          if(y==0)
+                  return x;
+          else
+                  return gcd(y,x%y);
+  }
+复制代码
+5.分数约分的方法：
+先求numerator、denominator的最大公约数（gcd）
+约分后的分数分子为numerator/gcd，分母为denominator/gcd。
+public String toString() {
+    int thisGcd = gcd(numerator, denominator);
+    return (numerator / thisGcd + "/" + denominator / thisGcd);
+  }
+复制代码
